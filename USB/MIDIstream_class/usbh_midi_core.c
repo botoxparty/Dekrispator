@@ -49,7 +49,7 @@
 // first thing I am doing is unifiying the reference
 // to this constant. second step is checking this number
 // automatically
- int interfaceToUse = 1; //CME Midi Keyboard and Argentinian Adapter 
+const int interfaceToUse = 1; //CME Midi Keyboard and Argentinian Adapter 
 //tomas
 
 /** @defgroup USBH_MIDI_CORE_Private_Variables
@@ -81,7 +81,7 @@ static USBH_Status 	USBH_MIDI_ClassRequest(USB_OTG_CORE_HANDLE *pdev ,
 static USBH_Status 	USBH_MIDI_Handle(USB_OTG_CORE_HANDLE *pdev ,
 		void *phost);
 
-const int interfaceToUse = 1;
+
 
 /****************** MIDI interface ****************************/
 
@@ -111,7 +111,7 @@ static USBH_Status USBH_MIDI_InterfaceInit ( USB_OTG_CORE_HANDLE *pdev,
 
 
 	if((pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceClass == USB_AUDIO_CLASS) && \
-			(pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
+	   (pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS)){
 		if(pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress & 0x80)
 		{
 			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress);
@@ -160,7 +160,6 @@ static USBH_Status USBH_MIDI_InterfaceInit ( USB_OTG_CORE_HANDLE *pdev,
 		status = USBH_OK;
 
 	}
-
 	else
 	{
 		pphost->usr_cb->DeviceNotSupported();
