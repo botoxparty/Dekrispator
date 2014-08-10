@@ -43,6 +43,14 @@
 #include "usbh_midi_core.h"
 //#include "usbh_midi_controller.h"
 
+//what interface are we using from the list?
+//original code was hardwired everywhere with 0
+//probably thats what works with the Korg thing
+// first thing I am doing is unifiying the reference
+// to this constant. second step is checking this number
+// automatically
+ int interfaceToUse = 1; //CME Midi Keyboard and Argentinian Adapter 
+//tomas
 
 /** @defgroup USBH_MIDI_CORE_Private_Variables
  * @{
@@ -100,31 +108,33 @@ static USBH_Status USBH_MIDI_InterfaceInit ( USB_OTG_CORE_HANDLE *pdev,
 	USBH_Status status = USBH_BUSY ;
 	MIDI_Machine.state = MIDI_ERROR;
 
+        uint8_t ourBInterfaceClass = pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceClass;
+        uint8_t ourBInterfaceSubClass = pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceSubClass;
 
-	if((pphost->device_prop.Itf_Desc[0].bInterfaceClass == USB_AUDIO_CLASS) && \
-			(pphost->device_prop.Itf_Desc[0].bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
-	{
-		if(pphost->device_prop.Ep_Desc[0][0].bEndpointAddress & 0x80)
+		if((ourBInterfaceClass == USB_AUDIO_CLASS) &&		\
+			   (ourBInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
+        {
+		if(pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress & 0x80)
 		{
-			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[0][0].bEndpointAddress);
-			MIDI_Machine.MIDIBulkInEpSize  = pphost->device_prop.Ep_Desc[0][0].wMaxPacketSize;
+			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress);
+			MIDI_Machine.MIDIBulkInEpSize  = pphost->device_prop.Ep_Desc[interfaceToUse][0].wMaxPacketSize;
 		}
 		else
 		{
-			MIDI_Machine.MIDIBulkOutEp = (pphost->device_prop.Ep_Desc[0][0].bEndpointAddress);
-			MIDI_Machine.MIDIBulkOutEpSize  = pphost->device_prop.Ep_Desc[0] [0].wMaxPacketSize;
+			MIDI_Machine.MIDIBulkOutEp = (pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress);
+			MIDI_Machine.MIDIBulkOutEpSize  = pphost->device_prop.Ep_Desc[interfaceToUse][0].wMaxPacketSize;
 		}
 
-		if(pphost->device_prop.Ep_Desc[0][1].bEndpointAddress & 0x80)
+		if(pphost->device_prop.Ep_Desc[interfaceToUse][1].bEndpointAddress & 0x80)
 
 		{
-			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[0][1].bEndpointAddress);
-			MIDI_Machine.MIDIBulkInEpSize  = pphost->device_prop.Ep_Desc[0][1].wMaxPacketSize;
+			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[interfaceToUse][1].bEndpointAddress);
+			MIDI_Machine.MIDIBulkInEpSize  = pphost->device_prop.Ep_Desc[interfaceToUse][1].wMaxPacketSize;
 		}
 		else
 		{
-			MIDI_Machine.MIDIBulkOutEp = (pphost->device_prop.Ep_Desc[0][1].bEndpointAddress);
-			MIDI_Machine.MIDIBulkOutEpSize  = pphost->device_prop.Ep_Desc[0][1].wMaxPacketSize;
+			MIDI_Machine.MIDIBulkOutEp = (pphost->device_prop.Ep_Desc[interfaceToUse][1].bEndpointAddress);
+			MIDI_Machine.MIDIBulkOutEpSize  = pphost->device_prop.Ep_Desc[interfaceToUse][1].wMaxPacketSize;
 		}
 
 		MIDI_Machine.hc_num_out = USBH_Alloc_Channel(pdev,
