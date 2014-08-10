@@ -63,6 +63,9 @@ extern ADSR_t 			adsr;
 
 //extern EightSegGenerator 	pitchGen _CCM_ ;
 
+//hardcoded now for simplicity, needs to be dealt with according to the other switches here.
+static bool        sequencerON _CCM_;
+
 static bool 		autoFilterON _CCM_;
 static bool			delayON _CCM_;
 static bool			phaserON _CCM_;
@@ -441,6 +444,7 @@ Synth_Init(void)
 	chorusON = false;
 	delayON = false;
 	phaserON = false;
+        sequencerON = false;
 
 	Delay_init();
 	drifter_init();
@@ -560,6 +564,21 @@ void sequencer_newSequence_action(void) // User callback function called by sequ
 	}
 }
 /*===============================================================================================================*/
+static char currentNote = 0;
+
+void newNoteArrived(char noteNumber, char velocity){  //called by note on's, at midi_interface.c
+  currentNote = noteNumber;
+  // calculate the frequency
+  f0 = notesFreq[noteNumber-21];
+  if (ADSR_getState(&adsr)==RELEASE || ADSR_getState(&adsr)==DONE )
+    ADSR_keyOn(&adsr); //this sets the state to attack, directly
+  //otherwise we just change the frequency, allowing legato to be played
+}
+void noteToBeKilled(char noteNumber){ //called by note off's, at midi_interface.c
+    if(noteNumber == currentNote)
+     ADSR_keyOff(&adsr);
+    //otherwise do nothing, because the player is doing legato
+}
 
 void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequencer
 {
@@ -576,8 +595,11 @@ void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequence
 	for (pos = 0; pos < length; pos++)
 	{
 		/*--- Sequencer actions and update ---*/
-		sequencer_process(); //computes f0 and calls sequencer_newStep_action() and sequencer_newSequence_action()
-
+		
+	        if (sequencerON) sequencer_process(); //computes f0 and calls sequencer_newStep_action() and sequencer_newSequence_action()
+                //else monophonicKeyInterface(); //computes f0 and starts/stops the ADSR, based on keyboard input
+                //probably not needed, just call stuff from the midi events.
+ 
 		/*--- compute vibrato modulation ---*/
 		f1 = f0 * (1 +  Osc_WT_SINE_SampleCompute(&vibr_lfo));
 
@@ -587,7 +609,7 @@ void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequence
 		/*--- Apply envelop and tremolo ---*/
 		env = ADSR_computeSample(&adsr) * (1 + Osc_WT_SINE_SampleCompute(&amp_lfo));
 		y *= vol * env; // apply volume and envelop
-		if (adsr.cnt_ >= seq.gateTime) ADSR_keyOff(&adsr);
+		if (adsr.cnt_ >= seq.gateTime) if (sequencerON) ADSR_keyOff(&adsr);
 
 		/*--- Apply filter effect ---*/
 		/* Update the filters cutoff frequencies */

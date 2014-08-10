@@ -147,7 +147,8 @@ void USBH_USR_Configuration_DescAvailable(USBH_CfgDesc_TypeDef * cfgDesc,
 	//
 	//	id = itfDesc;
 	//
-	//	if(((*id).bInterfaceClass  == USB_AUDIO_CLASS) && ((*id).bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
+	//	if(((*id).bInterfaceClass  == USB_AUDIO_CLASS) &&
+  //   ((*id).bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
 	//	{
 	//
 	//	}

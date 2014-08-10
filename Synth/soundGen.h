@@ -119,4 +119,7 @@ void Synth_Init(void);
 void make_sound(uint16_t *buf , uint16_t len);
 void OpsRandFreq(void);
 
+void newNoteArrived(char noteNumber, char velocity);
+void noteToBeKilled(char noteNumber);
+
 #endif /* __SOUNDGEN_H */

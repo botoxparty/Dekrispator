@@ -34,8 +34,17 @@
 
 /*---------------------------------------------------------------------------*/
 
+//this two variables defined here are the main data structures used to communicate
+//usb stuff to and from the instrument.
+
+//the __ALIGN defines used here are set in ./USB/usb_conf.h
+//the call the __align(4) function, which is a compiler specific arm directive to make
+//data structures byte aligned.
+
+//this is our USB OTG connector and drivers. this is our board
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE		USB_OTG_Core_dev __ALIGN_END  ;
 
+//this is the thing connected to the USB, e.g. a midi controller
 __ALIGN_BEGIN USBH_HOST					USB_Host __ALIGN_END ;
 
 bool	demoMode = true;
@@ -98,7 +107,6 @@ int main(void)
 		{
 			/* Host Task handler */
 			USBH_Process(&USB_OTG_Core_dev , &USB_Host);
-
 			USB_OTG_BSP_mDelay(1);// how many ms ?????
 
 		}
