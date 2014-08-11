@@ -67,6 +67,7 @@ static bool 		autoFilterON _CCM_;
 static bool			delayON _CCM_;
 static bool			phaserON _CCM_;
 static bool 		chorusON _CCM_;
+static bool 		sequencerON _CCM_;
 static int8_t		autoSound _CCM_;
 
 static float			f0 _CCM_ ;
@@ -441,7 +442,8 @@ Synth_Init(void)
 	chorusON = false;
 	delayON = false;
 	phaserON = false;
-
+        sequencerON = true;
+ 
 	Delay_init();
 	drifter_init();
 	//pitchGen_init();
@@ -592,7 +594,7 @@ void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequence
 	for (pos = 0; pos < length; pos++)
 	{
 		/*--- Sequencer actions and update ---*/
-		sequencer_process(); //computes f0 and calls sequencer_newStep_action() and sequencer_newSequence_action()
+	       if(sequencerON) sequencer_process(); //computes f0 and calls sequencer_newStep_action() and sequencer_newSequence_action()
 
 		/*--- compute vibrato modulation ---*/
 		f1 = f0 * (1 +  Osc_WT_SINE_SampleCompute(&vibr_lfo));
@@ -603,7 +605,7 @@ void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequence
 		/*--- Apply envelop and tremolo ---*/
 		env = ADSR_computeSample(&adsr) * (1 + Osc_WT_SINE_SampleCompute(&amp_lfo));
 		y *= vol * env; // apply volume and envelop
-		if (adsr.cnt_ >= seq.gateTime) ADSR_keyOff(&adsr);
+		if (adsr.cnt_ >= seq.gateTime) if(sequencerON) ADSR_keyOff(&adsr);
 
 		/*--- Apply filter effect ---*/
 		/* Update the filters cutoff frequencies */
