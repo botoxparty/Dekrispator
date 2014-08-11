@@ -36,6 +36,9 @@ endif
 SECONDARY_FLASH += \
 Dekrispator.hex \
 
+SECONDARY_FLASH += \
+Dekrispator.bin \
+
 SECONDARY_LIST += \
 Dekrispator.lst \
 
@@ -72,12 +75,19 @@ Dekrispator.siz: Dekrispator.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
+Dekrispator.bin: Dekrispator.elf
+	@echo 'Invoking: Cross ARM GNU Create Bin image'
+	arm-none-eabi-objcopy -O binary "Dekrispator.elf"  "Dekrispator.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+
 # Other Targets
 clean:
 	-$(RM) $(SECONDARY_SIZE)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(SECONDARY_FLASH)$(SECONDARY_LIST)$(S_UPPER_DEPS) Dekrispator.elf
 	-@echo ' '
 
-secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_LIST) $(SECONDARY_SIZE)
+secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_LIST) $(SECONDARY_SIZE) 
 
 .PHONY: all clean dependents
 .SECONDARY:
