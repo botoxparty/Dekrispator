@@ -561,6 +561,22 @@ void sequencer_newSequence_action(void) // User callback function called by sequ
 }
 /*===============================================================================================================*/
 
+static char currentNote = 0;
+void newNoteArrived(char noteNumber, char velocity){ //called by note on's, at midi_interface.c
+  currentNote = noteNumber;
+  // calculate the frequency
+  f0 = notesFreq[noteNumber-21];
+  if (ADSR_getState(&adsr)==RELEASE || ADSR_getState(&adsr)==DONE )
+    ADSR_keyOn(&adsr); //this sets the state to attack, directly
+  //otherwise we just change the frequency, allowing legato to be played
+}
+void noteToBeKilled(char noteNumber){ //called by note off's, at midi_interface.c
+  if(noteNumber == currentNote)
+    ADSR_keyOff(&adsr);
+  //otherwise do nothing, because the player is doing legato
+}
+
+
 void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequencer
 {
 

@@ -132,6 +132,23 @@ void MIDI_Decode(uint8_t * outBuf)
 
 	if (outBuf[1] != 0x00) start_LED_On(LED_Blue, 8);
 
+        //If the midi message is a Note On
+       //currently answering to all channels
+       //this is the right place to implement
+       // channel discrimination in the future
+       // note# velocity
+       if ((outBuf[1] & 0xF0) == 0x90){
+           if ((outBuf[3]) == 0x00) // because a note on with zero vel is in fact a note off
+                noteToBeKilled(outBuf[2]);
+          else
+                newNoteArrived(outBuf[2],outBuf[3]);
+       }
+       if ((outBuf[1] & 0xF0) == 0x80) noteToBeKilled(outBuf[2]);
+       //as far as MIDI is concerned, we have finished our job, now
+       // it is up to the synth to figure glides, polyphony and whatnot
+       //TODO we could put all the MIDI constants in an external file
+       // like a yaml or an xml
+       
 	/* If the midi message is a Control Change... */
 	if ((outBuf[1] & 0xF0) == 0xB0)
 	{
