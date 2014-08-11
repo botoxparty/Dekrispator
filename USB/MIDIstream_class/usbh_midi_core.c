@@ -111,7 +111,8 @@ static USBH_Status USBH_MIDI_InterfaceInit ( USB_OTG_CORE_HANDLE *pdev,
 
 
 	if((pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceClass == USB_AUDIO_CLASS) && \
-	   (pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS)){
+	   (pphost->device_prop.Itf_Desc[interfaceToUse].bInterfaceSubClass == USB_MIDISTREAMING_SubCLASS))
+        {
 		if(pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress & 0x80)
 		{
 			MIDI_Machine.MIDIBulkInEp = (pphost->device_prop.Ep_Desc[interfaceToUse][0].bEndpointAddress);
