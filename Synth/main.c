@@ -93,7 +93,7 @@ int main(void)
 	audio_init();
 
 	/* Choose demo or user mode --------------------------*/
-	if(STM_EVAL_PBGetState(BUTTON_USER)) // press or not user button before and during startup to choose user or demo mode
+	if(!STM_EVAL_PBGetState(BUTTON_USER)) // press or not user button before and during startup to choose user or demo mode
 	{	// normal user mode, with USB (button pressed)
 		demoMode = false;
 		/* Init Host Library */

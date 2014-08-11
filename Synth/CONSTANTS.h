@@ -15,7 +15,7 @@
 #define _2PI                    6.283185307f
 #define _PI                    	3.14159265f
 
-#define BUFF_LEN_DIV4           8 // number of samples in the audiobuffer for each channel <==> XX ms latency at 48kHz, tomas, was 400. Tried all the way down to 1 and no prob. 0 was the only value that did not work (and it shoulndt work with a zero size buffer so thats good).
+#define BUFF_LEN_DIV4           400 // number of samples in the audiobuffer for each channel <==> XX ms latency at 48kHz, tomas, was 400. Tried all the way down to 1 and no prob. 0 was the only value that did not work (and it shoulndt work with a zero size buffer so thats good).
 // When I make the buffer absurdly small like this, it takes longer for the CME to be recognized. When the buffer is one, the CME is only recognized on startup, if I remove it and replug it, it wont be recognized. maybe because the CPU is too busy calculating samples!
 
 
