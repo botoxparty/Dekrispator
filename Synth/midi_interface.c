@@ -265,6 +265,8 @@ void MIDI_Decode(uint8_t * outBuf)
 		case 60 : 	Drifter_minFreq_set(val);	break;
 		case 61 : 	Drifter_maxFreq_set(val);	break;
 		case 62 : 	Drifter_centralFreq_set(val);	break;
+                
+                case 107 : Sequencer_onOff(val); break;
 
 		}
 	}

@@ -578,6 +578,10 @@ void noteToBeKilled(char noteNumber){ //called by note off's, at midi_interface.
   //otherwise do nothing, because the player is doing legato
 }
 
+void Sequencer_onOff(int val)
+{
+  sequencerON = val<64;
+}
 
 void make_sound(uint16_t *buf , uint16_t length) // To be used with the Sequencer
 {
